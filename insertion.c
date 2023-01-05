@@ -52,4 +52,5 @@ int main()
     {
         printf(",%d", *(mat+i));
     }
+    printf("\n");
 }
