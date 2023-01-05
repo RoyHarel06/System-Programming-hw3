@@ -11,4 +11,4 @@ txtfind: txtfind.c
 .PHONY: clean valgrind
 	
 clean:
-	rm -f *.o *.a *.so connections
+	rm -f *.o *.a *.so isort txtfind

@@ -53,14 +53,11 @@ void copyStringAndSkipIndex(char destination[], char original[], int original_si
     int fixed_index = 0;
     for (int i = 0; i < original_size; i++)
     {
-        if (i == skip_index)
+        if (i != skip_index)
         {
+            destination[fixed_index] = original[i];
             fixed_index++;
-            continue;
         }
-        destination[i] = original[fixed_index];
-
-        fixed_index++;
     }
     
 }
@@ -77,7 +74,24 @@ bool isSimilar(char str1[], int str1_end, char str2[], int str2_end)
         char temp[WORD];
         copyStringAndSkipIndex(temp, str1, str1_end, i);
 
-        if( equalSubStrings(temp, 0, str1_end-2, str2, 0, str2_end-1) )
+        if( equalSubStrings(temp, 0, str1_end-1, str2, 0, str2_end) )
+            return true;
+    }
+
+    return false;
+}
+
+bool isSubstring(char str1[], int str1_end, char str2[], int str2_end)
+{
+    if (str1_end < str2_end)
+        return false;
+
+    if ( equalSubStrings(str1, 0, str1_end-1, str2, 0, str2_end-1) )
+        return true;
+
+    for (int i = 0; i <= str1_end-str2_end; i++)
+    {
+        if( equalSubStrings(str1, i, i+str2_end, str2, 0, str2_end) )
             return true;
     }
     
@@ -86,30 +100,31 @@ bool isSimilar(char str1[], int str1_end, char str2[], int str2_end)
 
 void print_lines(char str[], int str_size, bool similar_mode)
 {
-    char line[LINE] = "the program should print also cats\n";
-    int line_size = 35;//getLine(line);
+    char line[LINE];
+    int line_size = getLine(line);
+
     while (line_size != 0)
     {
         int current = 0;
+
+        if (!similar_mode && isSubstring(line, line_size, str, str_size))
+            printf("%.*s\n", line_size, line);
         
-        while (current < line_size)
+        while (similar_mode && current < line_size)
         {
             char word[WORD];
             int word_size = getNextWord(word, line, line_size, current);
             
+
             if (word_size != 0)
             {
                 bool print = false;
-                if (similar_mode && isSimilar(word, word_size, str, str_size))
+                if (isSimilar(word, word_size, str, str_size))
                     print = true;
-                else if (equalSubStrings(word, 0, word_size, str, 0, str_size))
-                    print = true;
-
                 
                 if (print)
                 {
-                    printf("%s\n", line);
-                    break;
+                    printf("%.*s\n", word_size, word);
                 }
             }
 
@@ -141,6 +156,9 @@ int main()
 
         search_key[i] = first_line[i];
     }
-    
-    print_lines(search_key, i-1, true);
+
+    char temp[WORD];
+    scanf("%c", temp);
+
+    print_lines(search_key, i, similar_mode);
 }
